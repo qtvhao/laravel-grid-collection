@@ -70,6 +70,11 @@ class GridColumn {
 		return $this->means;
 	}
 
+	public function getCellClass( $item ) {
+		$means = str_slug( $this->getMeans());
+
+		return "col-mean-$means";
+	}
 	public function getCellValue( $item ) {
 		return data_get( $item, $this->getMeans());
 	}

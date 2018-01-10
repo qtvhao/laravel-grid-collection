@@ -80,8 +80,9 @@ class GridCollection extends Collection {
 		$cells = '';
 		foreach ($this->columns as $gridColumn){
 			/** @var GridColumn $gridColumn */
-			$value = $gridColumn->getCellValue($item);
-			$cells .= "<td>$value</td>";
+			$value   = $gridColumn->getCellValue($item);
+			$classes = $gridColumn->getCellClass($item);
+			$cells   .= "<td class='$classes'>$value</td>";
 		}
 
 		return $cells;
