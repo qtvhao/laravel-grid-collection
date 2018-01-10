@@ -41,12 +41,16 @@ class GridCollection extends Collection {
 	}
 
 	public function col( $columnName ) {
-		$gridColumn = GridColumn::make();
-		$columnTitle = title_case( $columnName );
-		$gridColumn
-			->means($columnName)
-			->labeled( $columnTitle );
-		$this->addColumn( $gridColumn );
+		if($columnName instanceof GridColumn) {
+			$this->addColumn( $columnName);
+		}else{
+			$gridColumn = GridColumn::make();
+			$columnTitle = title_case( $columnName );
+			$gridColumn
+				->means($columnName)
+				->labeled( $columnTitle );
+			$this->addColumn( $gridColumn );
+		}
 
 		return $this;
 	}
