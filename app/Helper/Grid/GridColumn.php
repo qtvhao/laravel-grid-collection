@@ -2,9 +2,15 @@
 namespace App\Helper\Grid;
 
 
+use Illuminate\Support\Collection;
+
 class GridColumn {
 	private $label;
 	private $means;
+	/**
+	 * @var Collection
+	 */
+	private $valueFilters;
 
 	/**
 	 * @return GridColumn
@@ -17,6 +23,7 @@ class GridColumn {
 
 	public function __construct($means = '') {
 		$this->means( $means);
+		$this->setValueFilters( new Collection());
 	}
 
 	/**
@@ -76,6 +83,43 @@ class GridColumn {
 		return "col-mean-$means";
 	}
 	public function getCellValue( $item ) {
-		return data_get( $item, $this->getMeans());
+		$means = $this->getMeans();
+		$value_filters = $this->getValueFilters();
+		if ( $value_filters->isEmpty() ) {
+			$cellValue = data_get( $item, $means );
+		}else{
+			$cellValue = $item;
+			/** @var callable $value_filter */
+			foreach( $value_filters as $value_filter) {
+				$cellValue = call_user_func( $value_filter, $cellValue, $item);
+			}
+		}
+
+		return $cellValue;
+	}
+
+	/**
+	 * @return Collection
+	 */
+	public function getValueFilters() {
+		return $this->valueFilters;
+	}
+
+	/**
+	 * @param Collection $valueFilters
+	 */
+	public function setValueFilters(Collection $valueFilters ) {
+		$this->valueFilters = $valueFilters;
+	}
+
+	/**
+	 * @param callable $filter
+	 *
+	 * @return $this
+	 */
+	public function pipeValue(callable $filter) {
+		$this->valueFilters->push( $filter);
+
+		return $this;
 	}
 }
